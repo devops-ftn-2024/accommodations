@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    image: accommodatio-api-gateway:latest
+    environment:
+      PORT: 3003
+      MONGO_URI: mongodb://localhost:27017
+      MONGO_DB_NAME: accommodations
+      MONGO_COLLECTION_NAME: accommodations
+      ALLOWED_ORIGIN: http://localhost:4200
+    ports:
+      - "3003:3003"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/accommodation/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  app-network:
+    driver: bridge

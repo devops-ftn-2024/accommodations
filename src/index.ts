@@ -22,6 +22,10 @@ app.use(cors(corsOptions));
 
 // upload images for accomondation
 
+app.get('/accommodation/health', (req, res) => {
+  return res.status(200).json({message: "Hello, World!"});
+})
+
 app.get('/accommodation/:id', async (req, res) => {
     console.log(`Getting accommodation with id: ${req.params.id}`);
     try {
