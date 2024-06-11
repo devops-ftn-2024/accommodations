@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: accommodatio-api-gateway:latest
+    image: accommodatio-accommodations:latest
     environment:
       PORT: 3003
       MONGO_URI: mongodb://localhost:27017
