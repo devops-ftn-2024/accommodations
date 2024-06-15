@@ -1,21 +1,52 @@
-version: '3.8'
-
 services:
   app:
     image: accommodatio-accommodations:latest
+    depends_on:
+      - mongo
+      - rabbitmq
     environment:
       PORT: 3003
       MONGO_URI: mongodb://localhost:27017
       MONGO_DB_NAME: accommodations
       MONGO_COLLECTION_NAME: accommodations
       ALLOWED_ORIGIN: http://localhost:4200
+      RABBITMQ_HOST: some-rabbit
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
     ports:
       - "3003:3003"
+    restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/accommodation/health"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:3003/accommodation/health"
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: some-rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+      - "27017:27017"
+
 
 networks:
   app-network:
