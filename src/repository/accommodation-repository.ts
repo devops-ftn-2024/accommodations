@@ -1,5 +1,6 @@
 import { Collection, MongoClient, ObjectId, WithId } from "mongodb";
 import { Accommodation } from "../types/accommodation";
+import { UsernameDTO } from "../types/user";
 
 interface MongoAccommodation extends Omit<Accommodation, '_id'> {
     _id?: ObjectId;
@@ -42,5 +43,11 @@ export class AccommodationRepository {
 
     async getAccommodationByUser(username: string) {
         return this.collection.find({ ownerUsername: username }).toArray();
+    }
+
+    async updateUsername(usernameDTO: UsernameDTO) {
+        const { oldUsername, newUsername } = usernameDTO;
+        const result = await this.collection.updateMany({ ownerUsername: oldUsername }, { $set: { ownerUsername: newUsername } });
+        return result.modifiedCount;
     }
 }
