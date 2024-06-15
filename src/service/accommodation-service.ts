@@ -1,15 +1,18 @@
+import { EventQueue } from "../gateway/event-queue";
 import { AccommodationRepository } from "../repository/accommodation-repository";
-import { Accommodation, AccommodationInput } from "../types/accommodation";
-import { BadRequestError, ForbiddenError } from "../types/errors";
-import { LoggedUser, Role } from "../types/user";
+import { Accommodation, AccommodationInput, PriceLevel } from "../types/accommodation";
+import { BadRequestError, ForbiddenError, InternalServerError } from "../types/errors";
+import { LoggedUser, Role, UsernameDTO } from "../types/user";
 import { validateAccommodationInput } from "../util/validation";
 
 
 export class AccommodationService {
     private repository: AccommodationRepository;
+    private eventQueue: EventQueue;
 
     constructor() {
         this.repository = new AccommodationRepository();
+        this.eventQueue = new EventQueue(this);
     }
 
     async getAccommodation(id: string) {
@@ -32,9 +35,28 @@ export class AccommodationService {
             ownerUsername: loggedUser.username, 
             confirmationNeeded: !!accommodationInput.confirmationNeeded,
             rating: 0,
+        };
+        const accommodationId = await this.repository.createAccommodation(accommodation);
+        try {
+            const accommodationData = {
+                accommodationId,
+                ownerUsername: loggedUser.username,
+                priceLevel: accommodation.priceLevel,
+                confirmationNeeded: accommodation.confirmationNeeded,
+                location: accommodation.location,
+                minCapacity: accommodation.minCapacity,
+                maxCapacity: accommodation.maxCapacity,
+
+            }
+            this.eventQueue.execute(accommodationData, 'accommodation-created');
+            return {
+                _id: accommodationId,
+                ...accommodation
+            };
+        } catch (err) {
+            console.error(err);
+            throw new InternalServerError('Failed to emit user-registered event');
         }
-            ;
-        return this.repository.createAccommodation(accommodation);
     }
 
     async getAccommodationByUser(user: LoggedUser) {
@@ -45,6 +67,13 @@ export class AccommodationService {
             throw new ForbiddenError("Only hosts can get accommodations by user");
         }
         return this.repository.getAccommodationByUser(user.username);
+    }
+
+    async updateUsername(usernameDTO: UsernameDTO) {
+        if (!usernameDTO?.oldUsername || !usernameDTO?.newUsername) {
+            throw new BadRequestError("Missing username parameter");
+        }
+        return this.repository.updateUsername(usernameDTO);
     }
 
 }
