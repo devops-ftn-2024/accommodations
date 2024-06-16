@@ -1,14 +1,14 @@
-import { EventQueue } from "../../src/gateway/event-queue";
-import { AccommodationRepository } from "../../src/repository/accommodation-repository";
-import { AccommodationService } from "../../src/service/accommodation-service";
-import { BadRequestError, ForbiddenError, InternalServerError } from "../../src/types/errors";
-import { Role } from "../../src/types/user";
-import { validateAccommodationInput } from "../../src/util/validation";
-import {expect, jest, test} from '@jest/globals';
+import { EventQueue } from "../gateway/event-queue";
+import { AccommodationRepository } from "../repository/accommodation-repository";
+import { AccommodationService } from "../service/accommodation-service";
+import { BadRequestError, ForbiddenError, InternalServerError } from "../types/errors";
+import { Role } from "../types/user";
+import { validateAccommodationInput } from "../util/validation";
+import { expect, jest, test } from '@jest/globals';
 
-jest.mock('../../src/repository/accommodation-repository');
-jest.mock('../../src/gateway/event-queue');
-jest.mock('../../src/util/validation');
+jest.mock('../repository/accommodation-repository');
+jest.mock('../gateway/event-queue');
+jest.mock('../util/validation');
 
 describe('AccommodationService', () => {
     let service;
@@ -56,9 +56,9 @@ describe('AccommodationService', () => {
         test('should call repository.createAccommodation with the correct accommodation data', async () => {
             const loggedUser = { role: Role.HOST, username: 'host1' };
             const accommodationInput = { location: 'location1', priceLevel: 2, minCapacity: 1, maxCapacity: 4, confirmationNeeded: false };
-            const accommodationId = '60f8f8f8f8f8f8f8f8f8f8f'; 
+            const accommodationId = '60f8f8f8f8f8f8f8f8f8f8f';
             repository.createAccommodation.mockResolvedValue(Promise.resolve(accommodationId));
-            
+
             await service.createAccommodation(loggedUser, accommodationInput);
             expect(repository.createAccommodation).toHaveBeenCalledWith(expect.objectContaining({
                 ownerUsername: loggedUser.username,
