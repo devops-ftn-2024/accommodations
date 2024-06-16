@@ -1,6 +1,6 @@
 import { EventQueue } from "../gateway/event-queue";
 import { AccommodationRepository } from "../repository/accommodation-repository";
-import { Accommodation, AccommodationInput, PriceLevel } from "../types/accommodation";
+import { Accommodation, AccommodationInput } from "../types/accommodation";
 import { BadRequestError, ForbiddenError, InternalServerError } from "../types/errors";
 import { LoggedUser, Role, UsernameDTO } from "../types/user";
 import { validateAccommodationInput } from "../util/validation";
