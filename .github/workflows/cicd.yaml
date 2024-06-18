@@ -28,6 +28,11 @@ jobs:
       uses: sonarsource/sonarcloud-github-action@v2.3.0
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+         -Dsonar.organization=devops-ftn-2024
+         -Dsonar.projectKey=devops-ftn_accommodations
+         -Dsonar.verbose=true
 
   build:
     name: Build Docker image
