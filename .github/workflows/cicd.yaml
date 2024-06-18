@@ -14,6 +14,23 @@ env:
   IMAGE_NAME: accommodatio-accommodations
 
 jobs:
+  analyze:
+    name: Analyze code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v2.3.0
+      with:
+        projectBaseDir: src
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build:
     name: Build Docker image
     runs-on: ubuntu-latest
