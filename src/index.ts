@@ -22,18 +22,7 @@ const accommodationService = new AccommodationService();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(cors(corsOptions));
-
-const config = {
-  serviceName: 'accommodation-service',
-  sampler: {
-      type: "const",
-      param: 1
-  },
-  reporter: {
-      collectorEndpoint: process.env.JAEGER_ENDPOINT
-  },
-};                                                    
+app.use(cors(corsOptions));                                                 
 
 app.use(prometheusMiddleware({
   metricsPath: '/metrics',
