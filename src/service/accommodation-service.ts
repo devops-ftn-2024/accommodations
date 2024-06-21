@@ -40,6 +40,7 @@ export class AccommodationService {
             ownerUsername: loggedUser.username, 
             confirmationNeeded: !!accommodationInput.confirmationNeeded,
             rating: 0,
+            ratingsArray: []
         };
         const accommodationId = await this.repository.createAccommodation(accommodation);
         Logger.log(`New accommodation created with id: ${accommodationId}`);
@@ -91,5 +92,10 @@ export class AccommodationService {
     async deleteAccommodationsByHost(ownerUsername: string) {
         Logger.log(`Deleting accommodations with owner: ${ownerUsername}`);
         return this.repository.deleteAccommodation(ownerUsername);
+    }
+
+    async addRating(accommodationId: string, rating: number) {
+        Logger.log(`Adding rating ${rating} to accommodation with id: ${accommodationId}`);
+        return this.repository.addRating(accommodationId, rating);
     }
 }
