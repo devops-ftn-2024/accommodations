@@ -88,4 +88,8 @@ export class AccommodationService {
         return this.repository.updateUsername(usernameDTO);
     }
 
+    async deleteAccommodationsByHost(ownerUsername: string) {
+        Logger.log(`Deleting accommodations with owner: ${ownerUsername}`);
+        return this.repository.deleteAccommodation(ownerUsername);
+    }
 }
