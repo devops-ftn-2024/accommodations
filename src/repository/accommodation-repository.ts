@@ -60,4 +60,13 @@ export class AccommodationRepository {
         Logger.log(`Deleting accommodations with host: ${ownerUsername}`);
         await this.collection.deleteMany({ ownerUsername });
     }
+
+    async addRating(id: string, rating: number) {
+        Logger.log(`Adding rating ${rating} to accommodation with id: ${id}`);
+        const accommodation = await this.collection.findOne({ '_id': new ObjectId(id) });
+        const ratingsArray = accommodation.ratingsArray || [];
+        ratingsArray.push(rating);
+        const newRating = ratingsArray.reduce((a, b) => a + b, 0) / ratingsArray.length;
+        await this.collection.updateOne({ '_id': new ObjectId(id) }, { $set: { rating: newRating, ratingsArray } });
+    }
 }

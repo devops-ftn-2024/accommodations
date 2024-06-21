@@ -10,6 +10,7 @@ export interface Accommodation {
     ownerUsername: string;
     confirmationNeeded: boolean;
     rating: number;
+    ratingsArray: number[];
 }
 
 export interface Review {

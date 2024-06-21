@@ -89,6 +89,20 @@ export class EventQueue {
                     }, { noAck: true });
                 });
 
+                channel.assertQueue('accommodation-review-created', {
+                    durable: false
+                });
+
+                channel.consume('accommodation-review-created', (payload) => {
+                    if (payload != null) {
+                        const rating: {id: string, rating: number} = JSON.parse(payload.content.toString());
+                        Logger.log(`Accommodation rating was created: ${JSON.stringify(rating)} for accommodation with id: ${rating.id}`);
+                        this.accommodationService.addRating(rating.id, rating.rating);
+                    }
+                }, {
+                    noAck: true
+                })
+
             });
         });
     }
