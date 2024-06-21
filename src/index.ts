@@ -176,7 +176,7 @@ app.post('/accommodation', async (req, res) => {
     }
 });
 
-app.get('/accommodation/', async (req, res) => {
+app.get('/accommodation/mine', async (req, res) => {
     Logger.log(`Getting all accommodations which belongs to user: ${JSON.stringify(req.headers.user)}`);
     const userDataStr = req.headers.user;
     try {
