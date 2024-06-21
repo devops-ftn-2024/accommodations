@@ -31,7 +31,7 @@ jobs:
       with:
         args: >
          -Dsonar.organization=devops-ftn-2024
-         -Dsonar.projectKey=devops-ftn_accommodations
+         -Dsonar.projectKey=devops-ftn-2024_accommodations
          -Dsonar.verbose=true
 
   build:
