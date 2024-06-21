@@ -169,7 +169,7 @@ app.post('/accommodation', async (req, res) => {
         const userData = JSON.parse(userDataStr as string);
         Logger.log(`Logged user: ${JSON.stringify(userData)}`);
         const newAccommodationId = await accommodationService.createAccommodation(userData, req.body);
-        return res.status(201).json({ id: newAccommodationId });
+        return res.status(201).json(newAccommodationId);
     } catch (err) {
         const code = err instanceof CustomError ? err.code : 500;
         return res.status(code).json({ message: (err as Error).message });

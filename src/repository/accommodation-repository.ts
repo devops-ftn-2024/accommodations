@@ -55,4 +55,9 @@ export class AccommodationRepository {
         const result = await this.collection.updateMany({ ownerUsername: oldUsername }, { $set: { ownerUsername: newUsername } });
         return result.modifiedCount;
     }
+
+    async deleteAccommodation(ownerUsername: string) {
+        Logger.log(`Deleting accommodations with host: ${ownerUsername}`);
+        await this.collection.deleteMany({ ownerUsername });
+    }
 }
