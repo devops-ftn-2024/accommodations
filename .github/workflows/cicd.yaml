@@ -30,8 +30,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-         -Dsonar.organization=devops-ftn-2024
-         -Dsonar.projectKey=devops-ftn_accommodations
+         -Dsonar.organization=devops-ftn-2024-june
+         -Dsonar.projectKey=devops-ftn-2024_accommodations
          -Dsonar.verbose=true
 
   build:
