@@ -14,6 +14,26 @@ env:
   IMAGE_NAME: accommodatio-accommodations
 
 jobs:
+  analyze:
+    name: Analyze code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v2.3.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+         -Dsonar.organization=devops-ftn-2024-june
+         -Dsonar.projectKey=devops-ftn-2024_accommodations
+         -Dsonar.verbose=true
+
   build:
     name: Build Docker image
     runs-on: ubuntu-latest
@@ -60,7 +80,11 @@ jobs:
       run: docker load -i /tmp/image.tar
 
     - name: Run unit tests
-      run: docker run $IMAGE_NAME:latest npm run test
+      run: |
+        docker run \
+        -v $(mktemp -d):/app/dist \
+        -v ./src:/app/src \
+        $IMAGE_NAME:latest npm run test
 
   integration-tests:
     name: Run integration tests
@@ -91,6 +115,11 @@ jobs:
     - name: Wait for the app service
       working-directory: tests
       run: |
+        LOGS_SINCE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          fetch_logs() {
+          docker compose logs --since "$LOGS_SINCE" $1
+          LOGS_SINCE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        }
         echo "Waiting for the app service to start..."
         for i in {1..30}; do
           health=$(docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q app) 2>/dev/null)
@@ -99,6 +128,7 @@ jobs:
             exit 0
           fi
           echo "App service is $health... ($i/30)"
+          fetch_logs app
           sleep 3
         done
         echo "App service failed to start."
