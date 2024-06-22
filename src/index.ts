@@ -142,6 +142,23 @@ app.use((req, res, next) => {
 
 // upload images for accomondation
 
+app.get('/accommodation/mine', async (req, res) => {
+  Logger.log(`Getting all accommodations which belongs to user: ${JSON.stringify(req.headers.user)}`);
+  const userDataStr = req.headers.user;
+  try {
+      if (!userDataStr) {
+          Logger.error('NotFoundError: User data not provided');
+          throw new NotFoundError('User data not provided');
+        }
+      const userData = JSON.parse(userDataStr as string);
+      const accommodation = await accommodationService.getAccommodationByUser(userData);
+      return res.json(accommodation);
+  } catch (err) {
+    const code = err instanceof CustomError ? err.code : 500;
+    return res.status(code).json({ message: (err as Error).message });
+  }
+});
+
 app.get('/accommodation/health', (req, res) => {
   return res.status(200).json({message: "Hello, World!"});
 })
@@ -175,30 +192,6 @@ app.post('/accommodation', async (req, res) => {
         return res.status(code).json({ message: (err as Error).message });
     }
 });
-
-app.get('/accommodation/mine', async (req, res) => {
-    Logger.log(`Getting all accommodations which belongs to user: ${JSON.stringify(req.headers.user)}`);
-    const userDataStr = req.headers.user;
-    try {
-        if (!userDataStr) {
-            Logger.error('NotFoundError: User data not provided');
-            throw new NotFoundError('User data not provided');
-          }
-        const userData = JSON.parse(userDataStr as string);
-        const accommodation = await accommodationService.getAccommodationByUser(userData);
-        return res.json(accommodation);
-    } catch (err) {
-      const code = err instanceof CustomError ? err.code : 500;
-      return res.status(code).json({ message: (err as Error).message });
-    }
-});
-
-
-//preko rabbit mq: promeni username
-
-// preko rabbit mq: obrisi sve smestaje koji pripadaju korisniku
-
-// preko rabbit mq:azuriraj rejting smestaja
 
 app.listen(PORT, () => {
   console.log(`Backend service running on http://localhost:${PORT}`);
